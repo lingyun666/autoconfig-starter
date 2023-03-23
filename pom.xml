@@ -7,7 +7,7 @@
     <groupId>io.github.lingyun666</groupId>
     <artifactId>autoconfig-starter</artifactId>
     <!--att: 不要使用snapshot,否则在Staging Repo中不会有-->
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <packaging>pom</packaging>
 
     <properties>
