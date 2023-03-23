@@ -1,0 +1,4 @@
+# auto config : 会自动加载以下类进入spring容器(即使类没有@Configuration注解)
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  io.github.lingyun666.autoconfig.knife4j.Knife4jAutoConfig,\
+  io.github.lingyun666.autoconfig.minio.MinioAutoConfig
