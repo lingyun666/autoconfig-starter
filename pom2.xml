@@ -86,7 +86,9 @@
     </developers>
 
     <profiles>
+
         <profile>
+
             <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
