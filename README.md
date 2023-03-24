@@ -1,2 +1,2 @@
 # autoconfig-starter
-自动配置类starter, 上传至Maven中央仓库
+自动配置类starter, 上传至Maven中央仓库(Maven3)
