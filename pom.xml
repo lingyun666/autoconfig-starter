@@ -6,16 +6,15 @@
 
     <groupId>io.github.lingyun666</groupId>
     <artifactId>autoconfig-starter</artifactId>
-    <!--att: 不要使用snapshot,否则在Staging Repo中不会有-->
-    <version>1.1.0</version>
-    <packaging>pom</packaging>
+    <!--att: 不要使用snapshot,否则不会同步至中央仓库!-->
+    <version>1.1.1</version>
+    <!--att: 打包形式不可为pom,这会导致只上传pom到仓库!-->
+    <!--<packaging>pom</packaging>-->
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <springboot.version>2.2.0.RELEASE</springboot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <dependencies>
         <dependency>
@@ -57,16 +56,18 @@
     </dependencies>
 
     <!--hhs 2023-3-22 上传jar至maven中央仓库所需配置 -->
-
+    <!-- 1.项目基础信息 -->
     <name>autoconfig-starter</name>
     <description>自动配置的starter</description>
     <url>https://github.com/lingyun666</url>
+    <!--2.licenses信息-->
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
+    <!--3.开发者信息-->
     <developers>
         <developer>
             <id>lingkong</id>
@@ -79,22 +80,37 @@
             <timezone>+8</timezone>
         </developer>
     </developers>
-    <!-- 项目在github或其它托管平台的地址 -->
+    <!--4.scm信息-->
     <scm>
         <connection>https://github.com/lingyun666/autoconfig-starter.git</connection>
         <developerConnection>scm:git:ssh://git@github.com:lingyun666/autoconfig-starter.git</developerConnection>
         <url>https://github.com/lingyun666/autoconfig-starter</url>
     </scm>
+    <!--5.仓库地址+插件信息-->
     <profiles>
         <profile>
-            <!-- 注意,此id必须与setting.xml中指定的一致,不要自作聪明改它名字 -->
+            <!-- 注意,此id必须与setting.xml中指定的一致 -->
             <id>ossrh</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <!--仓库地址管理-->
+            <distributionManagement>
+                <!-- 要发布到的snapshot仓库 -->
+                <snapshotRepository>
+                    <!-- 注意,此id必须与setting.xml中指定的一致 -->
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <!-- 要发布到的仓库 -->
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
             <build>
-                <!-- 发布到中央SNAPSHOT仓库插件 -->
                 <plugins>
+                    <!--nexus流程处理插件 实现自动（deploy、release、drop...）等-->
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -106,35 +122,7 @@
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
-                    <!-- 生成源码插件 -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>2.2.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!-- 生成API文档插件 -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.9.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!-- gpg插件 -->
+                    <!-- gpg签名认证jar包各个资源, 避免被篡改 -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
@@ -163,19 +151,44 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <!--  打包源码 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- 打包javadoc -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <configuration>
+                            <!-- 忽略生成文档中的错误，如果想看下控制台中关于生成doc错误的去掉这个参数 -->
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <aggregate>true</aggregate>
+                            <charset>UTF-8</charset><!-- utf-8读取文件 -->
+                            <encoding>UTF-8</encoding><!-- utf-8进行编码代码 -->
+                            <docencoding>UTF-8</docencoding><!-- utf-8进行编码文档 -->
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
-            <distributionManagement>
-                <snapshotRepository>
-                    <!-- 注意,此id必须与setting.xml中指定的一致 -->
-                    <id>ossrh</id>
-                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
-                <repository>
-                    <id>ossrh</id>
-                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-            </distributionManagement>
         </profile>
     </profiles>
 </project>
