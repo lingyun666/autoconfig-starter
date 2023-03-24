@@ -7,7 +7,7 @@
     <groupId>io.github.lingyun666</groupId>
     <artifactId>autoconfig-starter</artifactId>
     <!--att: 不要使用snapshot,否则在Staging Repo中不会有-->
-    <version>1.0.8</version>
+    <version>1.1.0</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -93,65 +93,77 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <build>
-                <pluginManagement>
-                    <!-- 发布到中央SNAPSHOT仓库插件 -->
-                    <plugins>
-                        <plugin>
-                            <groupId>org.sonatype.plugins</groupId>
-                            <artifactId>nexus-staging-maven-plugin</artifactId>
-                            <version>1.6.7</version>
-                            <extensions>true</extensions>
-                            <configuration>
-                                <serverId>ossrh</serverId>
-                                <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                                <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                            </configuration>
-                        </plugin>
-                        <!-- 生成源码插件 -->
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-source-plugin</artifactId>
-                            <version>2.2.1</version>
-                            <executions>
-                                <execution>
-                                    <id>attach-sources</id>
-                                    <goals>
-                                        <goal>jar-no-fork</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-                        <!-- 生成API文档插件 -->
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>2.9.1</version>
-                            <executions>
-                                <execution>
-                                    <id>attach-javadocs</id>
-                                    <goals>
-                                        <goal>jar</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-                        <!-- gpg插件 -->
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-gpg-plugin</artifactId>
-                            <version>1.6</version>
-                            <executions>
-                                <execution>
-                                    <id>sign-artifacts</id>
-                                    <phase>verify</phase>
-                                    <goals>
-                                        <goal>sign</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
+                <!-- 发布到中央SNAPSHOT仓库插件 -->
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.7</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <!-- 生成源码插件 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- 生成API文档插件 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- gpg插件 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <!--
+                                    注: 如果不主动指定gpg.exe的话，那么可能(因为和idea内部发生了未知冲突)报错
+                                    Cannot run program "gpg.exe": CreateProcess error=2, 系统找不到指定的文件。
+                                    注: 当然，如果你直接用的git bash之类的工具执行mvn，而不是用idea提供的maven功能
+                                        的话，你也可以不指定executable。
+                                 -->
+                                <configuration>
+                                    <executable>C:/programs/env/maven/GnuPG/bin/gpg.exe</executable>
+                                    <!--
+                                        指定GPG 代表公钥的密钥id
+                                        注:因为我们可能拥有多个GPG密钥对，所以我们需要指定使用哪一个
+                                    -->
+                                    <passphrase>ED78DE064F2AA53AEFC177F9112ADEA777009081</passphrase>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
             <distributionManagement>
                 <snapshotRepository>
